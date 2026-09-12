@@ -26,13 +26,13 @@ def delete_courier(courier_id):
 @pytest.fixture(scope="module", autouse=True)
 def check_server():
     assert helpers.is_url_reachable(f"{data.API_BASE_URL}/api/v1/ping"), (
-        "Servidor da API não está acessível. Verifique se está ligado e "
-        "atualize API_BASE_URL em data.py"
+        "The API server is not reachable. Check whether it is up and "
+        "update API_BASE_URL in data.py"
     )
 
 
 class TestCreateCourier:
-    """POST /api/v1/courier — Adicionar entregador."""
+    """POST /api/v1/courier: add courier."""
 
     def test_valid_data_creates_courier(self):
         response = create_courier(helpers.unique_login(), data.VALID_PASSWORD, "Ana")
@@ -52,7 +52,7 @@ class TestCreateCourier:
         )
         assert response.status_code == 400
 
-    @pytest.mark.xfail(reason="BUG JSQ-13: firstName ausente não é validado (deveria retornar 400)")
+    @pytest.mark.xfail(reason="BUG JSQ-13: missing firstName is not validated (should return 400)")
     def test_missing_first_name_returns_400(self):
         response = create_courier(helpers.unique_login(), data.VALID_PASSWORD)
         assert response.status_code == 400
@@ -61,17 +61,17 @@ class TestCreateCourier:
         response = requests.post(f"{data.API_BASE_URL}/api/v1/courier", json={})
         assert response.status_code == 400
 
-    @pytest.mark.xfail(reason="BUG JSQ-12: login com números não é validado")
+    @pytest.mark.xfail(reason="BUG JSQ-12: login with numbers is not validated")
     def test_login_with_numbers_is_rejected(self):
         response = create_courier("abc123" + helpers.unique_login(), data.VALID_PASSWORD, "Ana")
         assert response.status_code == 400
 
-    @pytest.mark.xfail(reason="BUG JSQ-12: login com caractere especial não é validado")
+    @pytest.mark.xfail(reason="BUG JSQ-12: login with special character is not validated")
     def test_login_with_special_char_is_rejected(self):
         response = create_courier("ab@cd" + helpers.unique_login(), data.VALID_PASSWORD, "Ana")
         assert response.status_code == 400
 
-    @pytest.mark.xfail(reason="BUG JSQ-12: login com 1 caractere (abaixo do mínimo) não é validado")
+    @pytest.mark.xfail(reason="BUG JSQ-12: login with 1 character (below minimum) is not validated")
     def test_login_below_min_length_is_rejected(self):
         response = create_courier("a", data.VALID_PASSWORD, "Ana")
         assert response.status_code == 400
@@ -81,30 +81,34 @@ class TestCreateCourier:
         assert response.status_code in (201, 409)
 
     def test_login_at_max_length_10_is_accepted(self):
-        response = create_courier(helpers.unique_login()[:10].rjust(10, "x"), data.VALID_PASSWORD, "Ana")
+        response = create_courier(
+            helpers.unique_login()[:10].rjust(10, "x"), data.VALID_PASSWORD, "Ana"
+        )
         assert response.status_code in (201, 409)
 
-    @pytest.mark.xfail(reason="BUG JSQ-12: login com 11 caracteres (acima do máximo) não é validado")
+    @pytest.mark.xfail(
+        reason="BUG JSQ-12: login with 11 characters (above maximum) is not validated"
+    )
     def test_login_above_max_length_is_rejected(self):
         response = create_courier("abcdefghijk", data.VALID_PASSWORD, "Ana")
         assert response.status_code == 400
 
-    @pytest.mark.xfail(reason="BUG JSQ-14: firstName com números não é validado")
+    @pytest.mark.xfail(reason="BUG JSQ-14: firstName with numbers is not validated")
     def test_first_name_with_numbers_is_rejected(self):
         response = create_courier(helpers.unique_login(), data.VALID_PASSWORD, "Ana123")
         assert response.status_code == 400
 
-    @pytest.mark.xfail(reason="BUG JSQ-14: firstName fora do limite de tamanho não é validado")
+    @pytest.mark.xfail(reason="BUG JSQ-14: firstName outside the length limit is not validated")
     def test_first_name_below_min_length_is_rejected(self):
         response = create_courier(helpers.unique_login(), data.VALID_PASSWORD, "A")
         assert response.status_code == 400
 
-    @pytest.mark.xfail(reason="BUG JSQ-15: password com letras não é validado")
+    @pytest.mark.xfail(reason="BUG JSQ-15: password with letters is not validated")
     def test_password_with_letters_is_rejected(self):
         response = create_courier(helpers.unique_login(), "abcd", "Ana")
         assert response.status_code == 400
 
-    @pytest.mark.xfail(reason="BUG JSQ-15: password com tamanho diferente de 4 não é validado")
+    @pytest.mark.xfail(reason="BUG JSQ-15: password with length other than 4 is not validated")
     def test_password_wrong_length_is_rejected(self):
         response = create_courier(helpers.unique_login(), "123", "Ana")
         assert response.status_code == 400
@@ -117,7 +121,7 @@ class TestCreateCourier:
 
 
 class TestDeleteCourier:
-    """DELETE /api/v1/courier/:id — Excluir entregador."""
+    """DELETE /api/v1/courier/:id: delete courier."""
 
     @staticmethod
     def _create_and_login():
@@ -131,23 +135,35 @@ class TestDeleteCourier:
         response = delete_courier(courier_id)
         assert response.status_code == 200
 
-    @pytest.mark.xfail(reason="BUG JSQ-16: pedidos vinculados não são apagados ao excluir o entregador")
+    @pytest.mark.xfail(
+        reason="BUG JSQ-16: linked orders are not deleted when the courier is deleted"
+    )
     def test_delete_courier_removes_linked_orders(self):
         login, courier_id = self._create_and_login()
 
         order = requests.post(
             f"{data.API_BASE_URL}/api/v1/orders",
             json={
-                "firstName": "Cliente", "lastName": "Teste", "address": "Rua X, 100",
-                "metroStation": "Sé", "phone": "+551199999999", "rentTime": 3,
-                "deliveryDate": "2026-07-05", "comment": "teste cascade", "color": ["black"],
+                "firstName": "Cliente",
+                "lastName": "Teste",
+                "address": "Rua X, 100",
+                "metroStation": "Sé",
+                "phone": "+551199999999",
+                "rentTime": 3,
+                "deliveryDate": "2026-07-05",
+                "comment": "teste cascade",
+                "color": ["black"],
             },
         ).json()
         track = order["track"]
 
-        order_data = requests.get(f"{data.API_BASE_URL}/api/v1/orders/track", params={"t": track}).json()
+        order_data = requests.get(
+            f"{data.API_BASE_URL}/api/v1/orders/track", params={"t": track}
+        ).json()
         order_id = order_data["order"]["id"]
-        requests.put(f"{data.API_BASE_URL}/api/v1/orders/accept/{order_id}", params={"courierId": courier_id})
+        requests.put(
+            f"{data.API_BASE_URL}/api/v1/orders/accept/{order_id}", params={"courierId": courier_id}
+        )
 
         delete_courier(courier_id)
 
@@ -158,7 +174,9 @@ class TestDeleteCourier:
         response = delete_courier(999999)
         assert response.status_code == 404
 
-    @pytest.mark.xfail(reason="BUG JSQ-17: ID inválido retorna 500 com erro interno exposto, deveria ser 400")
+    @pytest.mark.xfail(
+        reason="BUG JSQ-17: invalid ID returns 500 with an exposed internal error, should be 400"
+    )
     def test_delete_with_invalid_id_format_returns_400(self):
         response = delete_courier("abc")
         assert response.status_code == 400

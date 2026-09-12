@@ -5,13 +5,16 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 
 class UrbanScooterOrderPage:
-    """Page Object do formulário 'Para quem é a scooter' (Fazer pedido)."""
+    """Page Object for the 'Who is the scooter for' form (Place order)."""
 
     # ====================================
-    # LOCALIZADORES - Campos do formulário
+    # LOCATORS - Form fields
     # ====================================
 
-    FIRST_NAME_FIELD = (By.XPATH, '//input[contains(@placeholder, "Nome") and not(contains(@placeholder, "Sobrenome"))]')
+    FIRST_NAME_FIELD = (
+        By.XPATH,
+        '//input[contains(@placeholder, "Nome") and not(contains(@placeholder, "Sobrenome"))]',
+    )
     LAST_NAME_FIELD = (By.XPATH, '//input[contains(@placeholder, "Sobrenome")]')
     ADDRESS_FIELD = (By.XPATH, '//input[contains(@placeholder, "Endereço")]')
     METRO_STATION_FIELD = (By.XPATH, '//input[contains(@placeholder, "Estação de metrô")]')
@@ -20,14 +23,14 @@ class UrbanScooterOrderPage:
     METRO_STATION_SUGGESTION = (By.XPATH, '//div[contains(@class, "suggest")]//div[1]')
 
     # ====================================
-    # LOCALIZADORES - Cookies
+    # LOCATORS - Cookies
     # ====================================
 
     COOKIE_ACCEPT_BUTTON = (By.XPATH, '//button[contains(., "ceitar")]')
     COOKIE_BANNER = (By.XPATH, '//*[contains(text(), "cookies")]')
 
     # ====================================
-    # INICIALIZAÇÃO
+    # INITIALIZATION
     # ====================================
 
     def __init__(self, driver):
@@ -35,7 +38,7 @@ class UrbanScooterOrderPage:
         self.wait = WebDriverWait(driver, 10)
 
     # ====================================
-    # UTILITÁRIOS
+    # UTILITIES
     # ====================================
 
     def _find(self, locator):
@@ -47,10 +50,10 @@ class UrbanScooterOrderPage:
         element.send_keys(text)
 
     def _get_value(self, locator):
-        return self._find(locator).get_attribute('value')
+        return self._find(locator).get_attribute("value")
 
     def _get_border_color(self, locator):
-        return self._find(locator).value_of_css_property('border-color')
+        return self._find(locator).value_of_css_property("border-color")
 
     def _blur(self, locator):
         self._find(locator).send_keys(Keys.TAB)
@@ -72,7 +75,7 @@ class UrbanScooterOrderPage:
             return False
 
     # ====================================
-    # NOME
+    # NAME
     # ====================================
 
     def set_first_name(self, value):
@@ -86,7 +89,7 @@ class UrbanScooterOrderPage:
         return self._get_border_color(self.FIRST_NAME_FIELD)
 
     # ====================================
-    # ENDEREÇO
+    # ADDRESS
     # ====================================
 
     def set_address(self, value):
@@ -100,7 +103,7 @@ class UrbanScooterOrderPage:
         return self._get_border_color(self.ADDRESS_FIELD)
 
     # ====================================
-    # ESTAÇÃO DE METRÔ
+    # METRO STATION
     # ====================================
 
     def set_metro_station(self, search_text):
@@ -108,7 +111,7 @@ class UrbanScooterOrderPage:
         self._find(self.METRO_STATION_SUGGESTION).click()
 
     def type_metro_station_free_text(self, text):
-        """Digita um texto livre no campo (sem selecionar sugestão) e tira o foco."""
+        """Types free text into the field (without selecting a suggestion) and blurs it."""
         self._type(self.METRO_STATION_FIELD, text)
         self._blur(self.METRO_STATION_FIELD)
 
@@ -116,7 +119,7 @@ class UrbanScooterOrderPage:
         return self._get_value(self.METRO_STATION_FIELD)
 
     # ====================================
-    # TELEFONE
+    # PHONE
     # ====================================
 
     def set_phone(self, value):

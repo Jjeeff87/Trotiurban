@@ -1,0 +1,30 @@
+name: Lint
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+# This project uses a temporary TripleTen test server that expires after
+# 2h of inactivity, so CI here only checks style/formatting (black,
+# flake8), instead of trying to run the real tests against a server that
+# may no longer exist. To run the tests, see the README ("Configuration"
+# section) for how to get an active server URL.
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dev dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: black --check
+        run: black --check .
+
+      - name: flake8
+        run: flake8 .

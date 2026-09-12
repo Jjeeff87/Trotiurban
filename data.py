@@ -1,43 +1,44 @@
 import os
 
 # ==========================================================
-# Configuração do servidor — Tarefa 1 (Web / Fazer pedido)
+# Server configuration, Task 1 (Web / Place order)
 # ==========================================================
-# O servidor de teste (TripleTen) expira após 2h de inatividade.
-# Toda vez que reiniciar o servidor, atualize a URL abaixo OU exporte a
-# variável de ambiente URBAN_SCOOTER_URL antes de rodar os testes:
-#   export URBAN_SCOOTER_URL="https://cnt-novo-id....containerhub.tripleten-services.com/order?lng=pt"
+# The TripleTen test server expires after 2h of inactivity.
+# Every time the server is restarted, update the URL below OR export the
+# URBAN_SCOOTER_URL environment variable before running the tests:
+#   export URBAN_SCOOTER_URL="https://cnt-novo-id....containerhub.tripleten-services.com/order?lng=pt"  # noqa: E501
 URBAN_SCOOTER_URL = os.getenv(
     "URBAN_SCOOTER_URL",
-    "https://cnt-b1de1780-a68d-4e53-b822-08dd98be58ad.containerhub.tripleten-services.com/order?lng=pt",
+    "https://cnt-b1de1780-a68d-4e53-b822-08dd98be58ad.containerhub.tripleten-services.com"
+    "/order?lng=pt",
 )
 
-# Dados de teste válidos para o formulário "Para quem é a scooter"
+# Valid test data for the "Who is the scooter for" form
 FIRST_NAME = "Maria"
 LAST_NAME = "Silva"
 ADDRESS = "Rua Augusta, 123"
 METRO_STATION_SEARCH = "1st"
 METRO_STATION_EXPECTED = "1st Street"
-PHONE_NUMBER = "+12345678901"  # 12 caracteres — dentro do limite documentado
+PHONE_NUMBER = "+12345678901"  # 12 characters, within the documented limit
 
-# Dados usados nos testes negativos / de bugs conhecidos
+# Data used in the negative tests / known bug tests
 ADDRESS_INVALID_CHAR = "Rua Augusta #123"
 ADDRESS_MAX_LENGTH_50 = "a" * 50
 NAME_WITH_ACCENT = "José"
-PHONE_MIN_LENGTH_10 = "+123456789"       # 10 chars — deveria ser aceito (BUG JSQ-3)
-PHONE_ABOVE_MAX_13 = "+123456789012"     # 13 chars — deveria ser rejeitado (BUG JSQ-4)
-PHONE_BOUNDARY_11 = "+1234567890"        # 11 chars — estado visual inconsistente (BUG JSQ-5)
+PHONE_MIN_LENGTH_10 = "+123456789"  # 10 chars, should be accepted (BUG JSQ-3)
+PHONE_ABOVE_MAX_13 = "+123456789012"  # 13 chars, should be rejected (BUG JSQ-4)
+PHONE_BOUNDARY_11 = "+1234567890"  # 11 chars, inconsistent visual state (BUG JSQ-5)
 
-# Cores de borda usadas pela aplicação para indicar campo válido/inválido
+# Border colors used by the application to indicate a valid/invalid field
 VALID_BORDER_COLOR = "rgb(26, 27, 34)"
 INVALID_BORDER_COLOR = "rgb(253, 110, 112)"
 
 
 # ==========================================================
-# Configuração da API — Tarefa 3 (Backend / Couriers)
+# API configuration, Task 3 (Backend / Couriers)
 # ==========================================================
-# Assim como o servidor web, o servidor da API expira após 2h de inatividade.
-# Atualize a URL abaixo ou exporte URBAN_SCOOTER_API_URL antes de rodar os testes.
+# Just like the web server, the API server expires after 2h of inactivity.
+# Update the URL below or export URBAN_SCOOTER_API_URL before running the tests.
 API_BASE_URL = os.getenv(
     "URBAN_SCOOTER_API_URL",
     "https://cnt-83d97b55-2300-4985-837d-f369c65e2b33.containerhub.tripleten-services.com",

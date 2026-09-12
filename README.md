@@ -1,64 +1,80 @@
-# Trotiurban — Automação de testes (Urban Scooter)
+# Trotiurban: Test Automation (Urban Scooter)
 
-Testes automatizados em Python para o projeto final de QA (TripleTen), cobrindo:
+Final project for the TripleTen QA program. Automated Python tests covering both
+the UI and the API of the same business flow:
 
-- **Tarefa 1 (Web)**: testes de UI com Selenium no formulário "Para quem é a scooter" (`codtestertroti.py` + `cod_troti.py`).
-- **Tarefa 3 (API)**: testes de API com `requests` + `pytest` para os endpoints de Adicionar/Excluir entregador (`test_api_courier.py`).
+- **Task 1 (Web)**: UI tests with Selenium on the "Who is the scooter for" form (`codtestertroti.py` + `cod_troti.py`).
+- **Task 3 (API)**: API tests with `requests` + `pytest` for the Add/Delete courier endpoints (`test_api_courier.py`).
 
-## Estrutura
+## Structure
 
-| Arquivo | Papel |
+| File | Role |
 |---|---|
-| `data.py` | URLs dos servidores e dados de teste (Page Object Model / config) |
-| `helpers.py` | Funções utilitárias (checar servidor no ar, gerar login único) |
-| `cod_troti.py` | Page Object do formulário web (`UrbanScooterOrderPage`) |
-| `codtestertroti.py` | Testes Selenium (Tarefa 1) |
-| `test_api_courier.py` | Testes de API (Tarefa 3) |
+| `data.py` | Server URLs and test data (Page Object Model / config) |
+| `helpers.py` | Utility functions (check if server is up, generate unique login) |
+| `cod_troti.py` | Page Object for the web form (`UrbanScooterOrderPage`) |
+| `codtestertroti.py` | Selenium tests (Task 1) |
+| `test_api_courier.py` | API tests (Task 3) |
 
-## Bugs conhecidos (marcados com `@pytest.mark.xfail`)
+## Known bugs (marked with `@pytest.mark.xfail`)
 
-Vários testes documentam bugs já reportados no Jira (JSQ-1 a JSQ-17) e são marcados
-como `xfail`: eles descrevem o comportamento **correto** esperado, então falham de
-propósito enquanto o bug não for corrigido. Quando aparecer `XPASS` na execução,
-significa que o bug foi corrigido e o `xfail` pode ser removido do teste.
+Several tests document bugs already reported in Jira (JSQ-1 to JSQ-17) and are marked
+as `xfail`: they describe the **correct** expected behavior, so they fail on purpose
+while the bug remains unfixed. When `XPASS` shows up during a run, it means the bug
+has been fixed and the `xfail` can be removed from the test.
 
-## Configuração
+## Configuration
 
-Os servidores de teste (TripleTen) expiram após 2h de inatividade. Antes de rodar,
-atualize as URLs em `data.py` **ou** exporte as variáveis de ambiente:
+The TripleTen test servers expire after 2h of inactivity. Before running the tests,
+update the URLs in `data.py` **or** export the environment variables:
 
 ```bash
 export URBAN_SCOOTER_URL="https://cnt-novo-id....containerhub.tripleten-services.com/order?lng=pt"
 export URBAN_SCOOTER_API_URL="https://cnt-novo-id....containerhub.tripleten-services.com"
 ```
 
-## Instalação
+## Installation
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Também é necessário ter o [ChromeDriver](https://chromedriver.chromium.org/) compatível
-com sua versão do Chrome no PATH (ou usar `webdriver-manager`, se preferir).
+You also need a [ChromeDriver](https://chromedriver.chromium.org/) compatible with
+your Chrome version on the PATH (or use `webdriver-manager`, if you prefer).
 
-## Rodando os testes
+## Running the tests
 
 ```bash
-# Todos os testes de API
+# All API tests
 pytest test_api_courier.py -v
 
-# Todos os testes web
+# All web tests
 pytest codtestertroti.py -v
 
-# Tudo
+# Everything (the project's pytest.ini tells pytest to recognize codtestertroti.py
+# as a test file, since its name doesn't follow the test_*.py pattern)
 pytest -v
 ```
 
-## Publicando no GitHub
+## Code quality
+
+```bash
+pip install -r requirements-dev.txt
+black --check .
+flake8 .
+```
+
+CI (GitHub Actions, in `.github/workflows/lint.yml`) runs `black --check` and
+`flake8` on every push/PR. It doesn't run the actual tests in CI because they
+depend on a TripleTen sandbox server that expires after 2h of inactivity (see the
+"Configuration" section above), so running them in CI would only make sense with
+an active server at the time.
+
+## Publishing to GitHub
 
 ```bash
 git add .
-git commit -m "Automação de testes Web (Selenium) e API (requests/pytest) - Urban Scooter"
-git remote add origin <URL_DO_SEU_REPOSITORIO_GITHUB>
+git commit -m "Web (Selenium) and API (requests/pytest) test automation - Urban Scooter"
+git remote add origin <YOUR_GITHUB_REPOSITORY_URL>
 git push -u origin master
 ```
